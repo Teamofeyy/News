@@ -1,20 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import * as Font from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import MainStack from './navigate';
+
+const fonts = () => Font.loadAsync({
+  'mt-var': require('./assets/Fonts/Montserrat-VariableFont_wght.ttf')
+});
 
 export default function App() {
+  const [fontLoaded, setFontLoaded] = useState(false);
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        SplashScreen.preventAutoHideAsync(); // Prevent the splash screen from hiding
+        await fonts(); // Load fonts
+        setFontLoaded(true);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        SplashScreen.hideAsync(); // Hide the splash screen
+      }
+    }
+
+    prepare();
+  }, []);
+
+  if (!fontLoaded) {
+    return null; // Return null or a loading component if fonts are not loaded
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <MainStack />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
 });
